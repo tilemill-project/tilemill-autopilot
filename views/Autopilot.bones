@@ -98,7 +98,7 @@ view.prototype.makeLayer = function(model) {
         var update = $(templates.AutopilotLayer(model));
         var type = $('.aspects a.active').attr('class').split('aspect-').pop().split(' ').shift();
         $('.aspects', model.el).replaceWith($('.aspects', update));
-        $('.aspects a.aspect-'+type).addClass('active');
+        $('.aspects a.aspect-'+type, model.el).addClass('active');
     });
 };
 
