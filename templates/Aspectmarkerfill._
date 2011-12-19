@@ -1,0 +1,19 @@
+<div class='colorpicker fill-e' data-key='marker-fill'></div>
+<ul class='form'>
+  <li class='text'>
+    <h2>Marker</h2>
+  </li>
+  <li>
+    <label>Visibility</label>
+    <div class='slider range' data-key='_marker-zoom' data-min='0' data-max='22'></div>
+  </li>
+  <li>
+    <label>Scale</label>
+    <div class='slider value' data-key='_marker-scale' data-step='0.1' data-min='1' data-max='2'></div>
+  </li>
+  <li>
+    <label>Size</label>
+    <div class='slider value' data-key='marker-width' data-min='0' data-max='40'></div>
+  </li>
+</ul>
+
