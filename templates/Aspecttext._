@@ -9,11 +9,11 @@
   </li>
   <li>
     <label>Size</label>
-    <div class='slider value' data-key='text-size' data-min='6' data-max='40'></div>
+    <div class='slider value' data-key='text-size' data-min='0' data-max='20'></div>
   </li>
   <li>
     <label>Kerning</label>
-    <div class='slider value' data-key='text-character-spacing' data-min='0' data-max='20'></div>
+    <div class='slider value' data-key='text-character-spacing' data-min='0' data-max='10'></div>
   </li>
   <li>
     <label>Field</label>

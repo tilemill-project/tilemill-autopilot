@@ -13,15 +13,17 @@
   </span>
 
   <span class='aspects'>
-    <% if (_(['polygon','line','point']).include(get('geometry'))) { %>
+    <% if (_(['polygon','line','linestring','point']).include(get('geometry'))) { %>
     <a class='aspect-text' href='#<%=id%>' title='Text'>
       <span class='icon autopilot-text'></span>
+      <% if (chart.get('text-size') && chart.get('text-name')) { %>
       <span class='fill fontview' style='
         color:<%=chart.get('text-fill')||'transparent'%>;
-        font-family:"<%=fontFamily(chart.get('text-face-name'))||'Arial'%>",sans-serif;
-        font-weight:<%=fontWeight(chart.get('text-face-name'))||'normal'%>;
-        font-style:<%=fontStyle(chart.get('text-face-name'))||'regular'%>;
+        font-family:"<%=fontFamily(chart.get('text-face-name')||'Arial')%>",sans-serif;
+        font-weight:<%=fontWeight(chart.get('text-face-name')||'normal')%>;
+        font-style:<%=fontStyle(chart.get('text-face-name')||'regular')%>;
         '>Abc</span>
+      <% } %>
     </a>
     <a class='aspect-line' href='#<%=id%>' title='Line'>
       <span class='icon autopilot-line'></span>

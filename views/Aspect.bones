@@ -27,33 +27,24 @@ view.prototype.initialize = function(options) {
     this.project = options.project;
     this.datasource = new models.Datasource();
 
-    if (this.type === 'text') {
-        $(this.el).html('<div class="mask"></div>');
-        $(this.el).addClass('loading');
-        var layer = this.project.get('Layer').get(this.model.id);
-        this.datasource.set(_(layer.get('Datasource')).extend({
-            id: layer.id,
-            project: this.project.id,
-            srs: null
-        }));
-        this.datasource.fetch({
-            success: _(function(model) {
-                $(this.el).removeClass('loading');
-                this.render();
-            }).bind(this),
-            error: function(model, err) {
-                $(this.el).removeClass('loading');
-                new views.Modal(err);
-            }
-        });
-    } else {
-        this.render();
-    }
+    // Skip datasource load for Map.
+    if (this.model.id === 'Map') return this.render();
+
+    // Load datasource.
+    var layer = this.project.get('Layer').get(this.model.id);
+    this.datasource.set(_(layer.get('Datasource')).extend({
+        id: layer.id,
+        project: this.project.id,
+        srs: null
+    }));
+    this.datasource.fetch({
+        success: this.render,
+        error: function(m, e) { new views.Modal(err) }
+    });
 };
 
 view.prototype.render = function() {
     $(this.el).html(templates['Aspect'+this.type](this));
-
     var model = this.model;
     var key = this.$('.colorpicker').data('key');
     var hsv = Color.RGB_HSV(this.css2rgb(this.model.get(key) || '#fff'));
@@ -115,7 +106,7 @@ view.prototype.sliderValue = function(ev, ui) {
     var attr = {};
     attr[key] = $(ev.target).slider('value');
     this.model.set(attr);
-    $('.ui-slider-handle', ev.target).html('<em>'+$(ev.target).slider('value')+'</em>');
+    $('.ui-slider-handle', ev.target).html($(ev.target).slider('value'));
 };
 
 view.prototype.sliderRange = function(ev, ui) {
@@ -123,7 +114,7 @@ view.prototype.sliderRange = function(ev, ui) {
     var attr = {};
     attr[key] = $(ev.target).slider('values');
     this.model.set(attr);
-    $('.ui-slider-handle:first', ev.target).html('<em>'+$(ev.target).slider('values')[0]+'</em>');
-    $('.ui-slider-handle:last', ev.target).html('<em>'+$(ev.target).slider('values')[1]+'</em>');
+    $('.ui-slider-handle:first', ev.target).text($(ev.target).slider('values')[0]);
+    $('.ui-slider-handle:last', ev.target).html($(ev.target).slider('values')[1]);
 };
 

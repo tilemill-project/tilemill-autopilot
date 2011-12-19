@@ -7,9 +7,7 @@ view.prototype.events = _({
 view.prototype.initialize = _(view.prototype.initialize).wrap(function(p, o) {
     if (!o.charts) throw new Error('options.charts is required');
 
-    _(this).bindAll(
-        'compile',
-        'aspect');
+    _(this).bindAll('compile', 'aspect');
     $(this.el).parents('div.project').addClass('autopilot');
     this.charts = o.charts;
     this.charts.bind('change', this.compile);

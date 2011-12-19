@@ -126,8 +126,8 @@ ul.autopilot {
   background:url(/assets/tilemill-autopilot/autopilot.png) 0px -20px no-repeat;
   }
 
-.aspect ul.form li { padding-left:100px; }
-.aspect ul.form li.text { padding-left:20px; }
+.aspect ul.form li { padding:5px 20px 4px 100px; }
+.aspect ul.form li.text { padding:10px 20px 9px; }
 .aspect ul.form li label { width:70px; margin-left:-80px; text-align:left; }
 
 .aspect .text .joined {
@@ -145,15 +145,18 @@ ul.autopilot {
   padding:10px;
   }
 
-.aspect .ui-slider-handle em {
-  position:absolute;
-  font-style:normal;
+.aspect .ui-slider-handle {
+  background:#666;
+  height:16px;
+  margin-top:-6px;
+  margin-bottom:-6px;
+  }
+
+.aspect .ui-slider-handle {
+  color:#fff;
   font-size:9px;
-  line-height:10px;
-  width:20px;
-  left:50%;
-  top:-12px;
-  margin-left:-10px;
-  display:block;
+  line-height:16px;
+  text-shadow:rgba(0,0,0,0.5) 0px 1px;
   text-align:center;
   }
+
