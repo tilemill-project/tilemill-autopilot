@@ -1,0 +1,10 @@
+/*
+autopilot
+<%= JSON.stringify(charts) %>
+*/
+<% charts.each(function(chart) { %>
+<%=(chart.id === 'Map' ? '' : '#') + chart.id%> {
+<%=chart.compile(layer.get(chart.id))%>
+}
+<% }); %>
+

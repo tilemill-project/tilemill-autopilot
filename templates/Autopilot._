@@ -1,0 +1,5 @@
+<div class='autopilot-header sunken'>
+  <a href='#add' class='popup add-layer button'><span class='icon reverse plus labeled'></span> Add layer</a>
+</div>
+<ul class='autopilot layers fill-s'></ul>
+

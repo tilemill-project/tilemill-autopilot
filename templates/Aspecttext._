@@ -1,0 +1,34 @@
+<div class='colorpicker fill-e' data-key='text-fill'></div>
+<ul class='form'>
+  <li class='text'>
+    <h2>Text</h2>
+  </li>
+  <li>
+    <label>Visibility</label>
+    <div class='slider range' data-key='_text-zoom' data-min='0' data-max='22'></div>
+  </li>
+  <li>
+    <label>Size</label>
+    <div class='slider value' data-key='text-size' data-min='6' data-max='40'></div>
+  </li>
+  <li>
+    <label>Kerning</label>
+    <div class='slider value' data-key='text-character-spacing' data-min='0' data-max='20'></div>
+  </li>
+  <li>
+    <label>Field</label>
+    <select name='text-name'>
+    <% _(datasource.get('fields')||[]).each(function(val, field) { %>
+    <option value='<%=field%>'><%=field%></option>
+    <% }); %>
+    </select>
+  </li>
+  <li>
+    <label>Font</label>
+    <select name='text-face-name'>
+    <% _(window.abilities.fonts).each(function(font) { %>
+    <option value='<%=font%>'><%=font%></option>
+    <% }); %>
+    </select>
+  </li>
+</ul>
