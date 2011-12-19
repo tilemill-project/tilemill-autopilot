@@ -1,34 +1,13 @@
 model = Backbone.Model.extend();
 
 model.prototype.compile = function(layer) {
-    if (this.id === 'Map') return this.toCSS(this.compileMap());
-    switch (layer.get('geometry')) {
-    case 'polygon':
-        return this.toCSS(this.compilePolygon(layer));
-        break;
-    case 'line':
-    case 'linestring':
-        return this.toCSS(this.compileLine(layer));
-        break;
-    case 'point':
-        return this.toCSS(this.compilePoint(layer));
-        break;
-    case 'raster':
-        return this.toCSS(this.compileRaster(layer));
-        break;
-    default:
-        return '';
-        break;
+    // Exception for Map pseudo-layer.
+    if (this.id === 'Map') {
+        var rules = {'Map':{}};
+        if (this.get('fill')) rules['Map']['background-color'] = this.get('fill');
+        return this.toCSS(rules);
     }
-};
 
-model.prototype.compileMap = function(layer) {
-    var rules = {'Map':{}};
-    if (this.get('fill')) rules['Map']['background-color'] = this.get('fill');
-    return rules;
-};
-
-model.prototype.compilePolygon = function(layer) {
     var tree = _(this.toJSON()).reduce(_(function(memo, val, key) {
         if (key === 'id') return memo;
         if (key.indexOf('_') === 0) return memo;
@@ -36,23 +15,61 @@ model.prototype.compilePolygon = function(layer) {
         case 'fill':
             var zoom = this.get('_fill-zoom') || [0,22];
             var group = _('::fill[zoom>=<%=obj[0]%>][zoom<=<%=obj[1]%>]').template(zoom);
+            var attr = {
+                'polygon': 'polygon-fill',
+                'point': 'marker-fill'
+            };
             memo[group] = memo[group] || {};
-            memo[group]['polygon-fill'] = val;
+            memo[group][attr[layer.get('geometry')]] = val;
             break;
         case 'line':
             if (!this.get('line-width')) return memo;
             var zoom = this.get('_line-zoom') || [0,22];
+            var scale = this.get('_line-scale') || 1;
             var group = _('::line[zoom>=<%=obj[0]%>][zoom<=<%=obj[1]%>]').template(zoom);
             memo[group] = memo[group] || {};
-            memo[group][key] = val;
+            if (scale > 1 && _(['line-width']).include(key)) {
+                for (var z = zoom[0], i = 0; z < zoom[1]; z++, i++) {
+                    memo[group]['[zoom='+z+']'] = memo[group]['[zoom='+z+']'] || {};
+                    memo[group]['[zoom='+z+']'][key] = val + '*' + Math.pow(scale,i);
+                }
+            } else {
+                memo[group][key] = val;
+            }
             break;
         case 'text':
             if (!this.get('text-name')) return memo;
             if (!this.get('text-size')) return memo;
             var zoom = this.get('_text-zoom') || [0,22];
+            var scale = this.get('_text-scale') || 1;
             var group = _('::text[zoom>=<%=obj[0]%>][zoom<=<%=obj[1]%>]').template(zoom);
             memo[group] = memo[group] || {};
-            memo[group][key] = val;
+            memo[group]['text-allow-overlap'] = 'true';
+            if (scale > 1 && _(['text-size','text-character-spacing']).include(key)) {
+                for (var z = zoom[0], i = 0; z < zoom[1]; z++, i++) {
+                    memo[group]['[zoom='+z+']'] = memo[group]['[zoom='+z+']'] || {};
+                    memo[group]['[zoom='+z+']'][key] = val + '*' + Math.pow(scale,i);
+                }
+            } else {
+                memo[group][key] = val;
+            }
+            break;
+        // Outlier
+        case 'marker':
+            if (!this.get('marker-width')) return memo;
+            var zoom = this.get('_marker-zoom') || [0,22];
+            var scale = this.get('_marker-scale') || 1;
+            var group = _('::marker[zoom>=<%=obj[0]%>][zoom<=<%=obj[1]%>]').template(zoom);
+            memo[group] = memo[group] || {};
+            memo[group]['marker-allow-overlap'] = 'true';
+            if (scale > 1 && _(['marker-width','marker-line-width']).include(key)) {
+                for (var z = zoom[0], i = 0; z < zoom[1]; z++, i++) {
+                    memo[group]['[zoom='+z+']'] = memo[group]['[zoom='+z+']'] || {};
+                    memo[group]['[zoom='+z+']'][key] = val + '*' + Math.pow(scale,i);
+                }
+            } else {
+                memo[group][key] = val;
+            }
             break;
         }
         return memo;
@@ -71,52 +88,8 @@ model.prototype.compilePolygon = function(layer) {
         .value();
     var rules = {};
     rules['#'+this.id] = tree;
-    return rules;
-};
-
-model.prototype.compileLine = function(layer) {
-    var rules = {};
-    rules['#'+this.id] = _(this.toJSON()).reduce(_(function(memo, val, key) {
-        if (key === 'id') return memo;
-        if (key.indexOf('_') === 0) return memo;
-        switch (key.split('-')[0]) {
-        case 'line':
-            if (!this.get('line-width')) return memo;
-            var zoom = this.get('_line-zoom') || [0,22];
-            var group = _('::line[zoom>=<%=obj[0]%>][zoom<=<%=obj[1]%>]').template(zoom);
-            if (zoom[1]-zoom[0] === 22) {
-                memo[key] = val;
-            } else {
-                memo[group] = memo[group] || {};
-                memo[group][key] = val;
-            }
-            break;
-        case 'text':
-            if (!this.get('text-name')) return memo;
-            if (!this.get('text-size')) return memo;
-            var zoom = this.get('_text-zoom') || [0,22];
-            var group = _('::text[zoom>=<%=obj[0]%>][zoom<=<%=obj[1]%>]').template(zoom);
-            if (zoom[1]-zoom[0] === 22) {
-                memo[key] = val;
-            } else {
-                memo[group] = memo[group] || {};
-                memo[group][key] = val;
-            }
-            break;
-        }
-        return memo;
-    }).bind(this), {});
-    return rules;
-};
-
-model.prototype.compilePoint = function(layer) {
-    var rules = {};
-    return rules;
-};
-
-model.prototype.compileRaster = function(layer) {
-    var rules = {};
-    return rules;
+    console.warn(this.toCSS(rules));
+    return this.toCSS(rules);
 };
 
 model.prototype.toCSS = function(rules, indent) {

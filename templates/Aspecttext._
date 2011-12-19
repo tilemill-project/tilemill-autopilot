@@ -8,6 +8,10 @@
     <div class='slider range' data-key='_text-zoom' data-min='0' data-max='22'></div>
   </li>
   <li>
+    <label>Scale</label>
+    <div class='slider value' data-key='_text-scale' data-step='0.1' data-min='1' data-max='2'></div>
+  </li>
+  <li>
     <label>Size</label>
     <div class='slider value' data-key='text-size' data-min='0' data-max='20'></div>
   </li>

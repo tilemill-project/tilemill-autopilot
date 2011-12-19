@@ -25,6 +25,9 @@
         '>Abc</span>
       <% } %>
     </a>
+    <% } %>
+
+    <% if (_(['polygon','line','linestring']).include(get('geometry'))) { %>
     <a class='aspect-line' href='#<%=id%>' title='Line'>
       <span class='icon autopilot-line'></span>
       <span class='line' style='
@@ -33,7 +36,24 @@
         '></span>
     </a>
     <% } %>
-    <% if (_(['polygon','point','map']).include(get('geometry'))) { %>
+
+    <% if (_(['point']).include(get('geometry'))) { %>
+    <a class='aspect-markerline' href='#<%=id%>' title='Line'>
+      <span class='icon autopilot-markerline'></span>
+      <span class='line' style='
+        border-top:<%=chart.get('marker-line-width')||'0'%>px <%=chart.get('marker-line-color')||'transparent'%> solid;
+        margin-top:-<%=(parseInt(chart.get('marker-line-width'),10)||0)*0.5%>px;
+        '></span>
+    </a>
+    <a class='aspect-markerfill' href='#<%=id%>' title='Fill'>
+      <span class='icon autopilot-markerfill'></span>
+      <span class='fill' style='
+        background-color:<%=chart.get('marker-fill')%>
+        '></span>
+    </a>
+    <% } %>
+
+    <% if (_(['polygon','map']).include(get('geometry'))) { %>
     <a class='aspect-fill' href='#<%=id%>' title='Fill'>
       <span class='icon autopilot-fill'></span>
       <span class='fill' style='

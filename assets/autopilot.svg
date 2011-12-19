@@ -28,8 +28,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1"
-     inkscape:cx="17.636886"
-     inkscape:cy="13.131095"
+     inkscape:cx="112.60899"
+     inkscape:cy="32.779761"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false">
@@ -49,7 +49,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -58,6 +58,11 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-1012.3622)">
+    <path
+       style="color:#000000;fill:#202020;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="M 110 4.5 C 106.96244 4.5 104.5 6.9624359 104.5 10 C 104.5 13.037564 106.96244 15.5 110 15.5 C 113.03756 15.5 115.5 13.037564 115.5 10 C 115.5 6.9624359 113.03756 4.5 110 4.5 z M 110 7 C 111.65684 7 113 8.343164 113 10 C 113 11.656836 111.65684 13 110 13 C 108.34316 13 107 11.656836 107 10 C 107 8.343164 108.34316 7 110 7 z "
+       transform="translate(0,1012.3622)"
+       id="path3004" />
     <g
        id="g4866"
        transform="translate(0,260)">
@@ -112,5 +117,15 @@
        id="rect6856"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="sscssssccsssscssssccsssscssssccsssscssssccsssccccc" />
+    <path
+       sodipodi:type="arc"
+       style="color:#000000;fill:#202020;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       id="path3000"
+       sodipodi:cx="90"
+       sodipodi:cy="10"
+       sodipodi:rx="3"
+       sodipodi:ry="3"
+       d="m 93,10 a 3,3 0 1 1 -6,0 3,3 0 1 1 6,0 z"
+       transform="matrix(1.6666667,0,0,1.6666667,-60,1005.6955)" />
   </g>
 </svg>

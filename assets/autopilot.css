@@ -6,11 +6,15 @@
 .icon.geometry-map,
 .icon.autopilot-fill,
 .icon.autopilot-line,
-.icon.autopilot-text { background-image:url(/assets/tilemill-autopilot/autopilot.png); }
+.icon.autopilot-text,
+.icon.autopilot-markerfill,
+.icon.autopilot-markerline { background-image:url(/assets/tilemill-autopilot/autopilot.png); }
 .icon.geometry-map   { background-position:0px 0px; }
 .icon.autopilot-fill { background-position:-20px 0px; }
 .icon.autopilot-line { background-position:-40px 0px; }
 .icon.autopilot-text { background-position:-60px 0px; }
+.icon.autopilot-markerfill { background-position:-80px 0px; }
+.icon.autopilot-markerline { background-position:-100px 0px; }
 
 .autopilot-header {
   padding:9px;
@@ -111,7 +115,7 @@ ul.autopilot {
   -webkit-transition:height 100ms;
   }
 
-.aspect.active { height:240px; }
+.aspect.active { height:220px; }
 
 .aspects a.active:after {
   content:'';
