@@ -1,0 +1,32 @@
+<div class='colorpicker fill-e' data-key='marker-fill'></div>
+<ul class='form'>
+  <%= this.AspectFilters(obj) %>
+  <li>
+    <label>Scale</label>
+    <div class='slider value' data-key='_marker-scale' data-step='0.1' data-min='1' data-max='2'></div>
+  </li>
+  <li>
+    <label>Size</label>
+    <div class='slider range' data-key='marker-width' data-min='0' data-max='40'></div>
+  </li>
+  <li>
+    <label>Line</label>
+    <div class='slider range' data-step='0.5' data-key='marker-line-width' data-min='0' data-max='10'></div>
+  </li>
+  <li>
+    <label>Resize by</label>
+    <select name='_marker-field'>
+    <option class='null' value=''>- No field -</option>
+    <% _(datasource.get('fields')||[]).each(function(val, field) { %>
+    <% if (val.type === 'Number') { %>
+    <option value='<%=field%>'><%=field%></option>
+    <% } %>
+    <% }); %>
+    </select>
+    <% var info = datasource.get('fields')[model.get('_marker-field')]; %>
+    <% if (info) { %>
+    <div class='slider range minmax' data-key='_marker-range' data-min='<%=info.min%>' data-max='<%=info.max%>'></div>
+    <% } %>
+  </li>
+</ul>
+

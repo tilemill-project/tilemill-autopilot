@@ -34,6 +34,8 @@ view.prototype.initialize = function(options) {
     // Bind model change handlers.
     this.model.bind('change:polygon-fill', this.shades);
     this.model.bind('change:polygon-fill', this.swatches);
+    this.model.bind('change:_polygon-field', this.render);
+    this.model.bind('change:_marker-field', this.render);
     this.model.bind('filters', this.render);
 
     // Load datasource.

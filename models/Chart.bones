@@ -30,49 +30,81 @@ model.prototype.deepSet = function(key, val, options) {
     var root = key.split('.').shift();
     var attr = {};
     attr[root] = this.attributes[root];
-    console.warn(attr[root]);
     return this.set(deepSet(attr, key.split('.'), val), options)
         .trigger('change')
         .trigger('change:' + root);
 };
 
-model.prototype.compile = function(layer) {
-    function zoomRules(rules, scale, zoom, key, val) {
-        if (scale <= 1) {
-            rules[key] = val;
-            return;
-        }
-        zoom = zoom || [0,22];
+model.prototype.compileZoom = function(rules, key, val) {
+    var prefix = key.split('-').shift();
+    var filters = this.get('_'+prefix+'-filters') || {};
+    var scale = this.get('_'+prefix+'-scale') || 1;
+    var zoom = filters.zoom || [0,22];
+    val = _(val).isArray() ? val[0] : val;
+
+    if (scale <= 1) {
+        rules[key] = val;
+    } else {
         for (var z = zoom[0], i = 0; z <= zoom[1]; z++, i++) {
             rules['[zoom='+z+']'] = rules['[zoom='+z+']'] || {};
             rules['[zoom='+z+']'][key] = val + '*' + Math.pow(scale,i).toFixed(2);
         }
-    };
-    var shadeRules = _(function(rules, key, val) {
-        if (_(this.get('_polygon-field')).isUndefined() ||
-            _(this.get('_polygon-range')).isUndefined() ||
-            val.length < 2) {
-            rules[key] = val;
-            return;
-        }
-        var divisor = val.length - 1;
-        var diff = (this.get('_polygon-range')[1] - this.get('_polygon-range')[0]) / divisor;
-        for (var i = 0; i < val.length; i++) {
+    }
+    return this;
+};
+
+model.prototype.compileMarker = function(rules, key, val) {
+    var prefix = key.split('-').shift();
+    var filters = this.get('_'+prefix+'-filters') || {};
+    var field = this.get('_'+prefix+'-field');
+    var range = this.get('_'+prefix+'-range');
+
+    if (!field || !range || val.length < 2) {
+        rules[key] = val;
+    } else {
+        var breaks = 5; // @TODO configurable.
+        var diffRange = (range[1] - range[0]) / (breaks - 1);
+        var diffValue = (val[1] - val[0]) / (breaks - 1);
+        for (var i = 0; i < breaks; i++) {
             var group = _('[<%=f%>>=<%=min%>]').template({
-                f: this.get('_polygon-field'),
-                min: this.get('_polygon-range')[0] + diff*i
+                f:field,
+                min: range[0] + diffRange*i
             });
             rules[group] = rules[group] || {};
-            rules[group]['polygon-fill'] = val[i];
+            this.compileZoom(rules[group], key, val[0] + diffValue*i);
         }
-    }).bind(this);
+    }
+    return this;
+};
 
+model.prototype.compileShades = function(rules, key, val) {
+    var prefix = key.split('-').shift();
+    var field = this.get('_'+prefix+'-field');
+    var range = this.get('_'+prefix+'-range');
+
+    if (!field || !range || val.length < 2) {
+        rules[key] = val;
+    } else {
+        var breaks = val.length;
+        var diffRange = (range[1] - range[0]) / (breaks - 1);
+        for (var i = 0; i < breaks; i++) {
+            var group = _('[<%=f%>>=<%=min%>]').template({
+                f: field,
+                min: range[0] + diffRange*i
+            });
+            rules[group] = rules[group] || {};
+            rules[group][key] = val[i];
+        }
+    }
+    return this;
+};
+
+model.prototype.compile = function(layer) {
     var tree = _(this.toJSON()).reduce(_(function(memo, val, key) {
         if (key === 'id') return memo;
         if (key.indexOf('_') === 0) return memo;
-        var prefix = key.split('-')[0];
+        var prefix = key.split('-').shift();
         var filters = this.get('_'+prefix+'-filters') || {};
-        var scale = this.get('_'+prefix+'-scale') || 1;
         var group = '::' + prefix + _(filters).map(function(val, key) {
             return _('[<%=k%>>=<%=v[0]%>][<%=k%><=<%=v[1]%>]')
                 .template({ k:key, v:val });
@@ -86,7 +118,7 @@ model.prototype.compile = function(layer) {
             memo[group][key] = val;
             switch (key) {
             case 'polygon-fill':
-                shadeRules(memo[group], key, val);
+                this.compileShades(memo[group], key, val);
                 break;
             default:
                 memo[group][key] = val;
@@ -98,7 +130,7 @@ model.prototype.compile = function(layer) {
             memo[group] = memo[group] || {};
             switch (key) {
             case 'line-width':
-                zoomRules(memo[group], scale, filters.zoom, key, val);
+                this.compileZoom(memo[group], key, val);
                 break;
             default:
                 memo[group][key] = val;
@@ -113,7 +145,7 @@ model.prototype.compile = function(layer) {
             switch (key) {
             case 'text-size':
             case 'text-character-spacing':
-                zoomRules(memo[group], scale, filters.zoom, key, val);
+                this.compileZoom(memo[group], key, val);
                 break;
             default:
                 memo[group][key] = val;
@@ -127,7 +159,7 @@ model.prototype.compile = function(layer) {
             switch(key) {
             case 'marker-width':
             case 'marker-line-width':
-                zoomRules(memo[group], scale, filters.zoom, key, val);
+                this.compileMarker(memo[group], key, val);
                 break;
             default:
                 memo[group][key] = val;
@@ -162,8 +194,7 @@ model.prototype.compile = function(layer) {
 model.prototype.toCSS = function(rules, indent) {
     indent = indent || '';
     return _(rules).map(_(function(val, key) {
-        // Use first value of any arrays that remain.
-        if (_(val).isArray()) val = val[0];
+        val = _(val).isArray() ? val[0] : val;
 
         // Recurse for objects.
         if (_(val).isObject()) return _(val).size() > 1

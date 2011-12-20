@@ -213,16 +213,10 @@ ul.autopilot li .aspects { padding:10px; }
   background:#888 url(/assets/tilemill-autopilot/autopilot.png) -40px -40px;
   }
 
-.aspect .swatch.active {
-  box-shadow:
-    #fff 0px 0px 0px 1px,
-    #888 0px 0px 0px 3px;
-}
+.aspect .swatch.active { box-shadow: #fff 0px 0px 0px 1px, #888 0px 0px 0px 3px; }
 
 .aspect .swatch,
 .aspect .swatch .fill {
   border-radius:3px;
   box-shadow:inset rgba(0,0,0,0.1) 0px 0px 0px 1px;
   }
-
-.aspect .swatch.active { display:block; }
