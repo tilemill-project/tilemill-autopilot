@@ -55,7 +55,7 @@ ul.autopilot {
   max-height:none;
   }
 
-ul.autopilot li {
+ul.autopilot > li {
   position:relative;
   background:#eee;
   padding:10px 30px 0px;
@@ -134,15 +134,13 @@ ul.autopilot li .aspects { padding:10px; }
   position:relative;
   background:#fff;
   padding:0px 224px 0px 0px;
-  height:0px;
+  display:none;
+  border-top:1px solid #ccc;
   margin:0px -30px 0px;
-  box-shadow:inset #ddd 0px 1px;
-  transition:height 100ms;
-  -moz-transition:height 100ms;
-  -webkit-transition:height 100ms;
+  min-height:200px;
   }
 
-.aspect.active { height:220px; }
+.aspect.active { display:block }
 
 .aspects a.active:after {
   content:'';
@@ -158,22 +156,29 @@ ul.autopilot li .aspects { padding:10px; }
   }
 
 .aspect ul.form li.active { display:block; }
-.aspect ul.form li { padding:5px 20px 4px 100px; }
-.aspect ul.form li.text { padding:10px 20px 9px; }
-.aspect ul.form li label { width:70px; margin-left:-80px; text-align:left; }
+.aspect ul.form li { max-width:none; padding:5px 10px 4px 100px; }
+.aspect ul.form li.text { padding:10px 10px 9px; }
+.aspect ul.form li label { width:80px; margin-left:-90px; text-align:left; }
+.aspect ul.form li:last-child { border:0px; }
 
-.aspect .text .joined {
-  position:absolute;
-  top:10px;
-  right:10px;
+#page .aspect ul.form li.filter {
+  padding-right:40px;
+  background-color:#ddd;
+  border-color:#ccc;
   }
+.aspect ul.form li.filter .ui-slider:before { background-color:#eee; }
+.aspect ul.form li.filter label { font-size:11px; text-transform:uppercase; }
+.aspect ul.form li.filter a.close { position:absolute; right:10px; top:5px; }
+
+.aspect .text .filters { position:absolute; top:10px; right:10px; }
+.aspect .text .filters select { width:80px; }
+.aspect .text .filters > * { vertical-align:middle; }
 
 .aspect .colorpicker {
   position:absolute;
   background:#fff;
   z-index:1;
   border-left:1px solid #ddd;
-  box-shadow:inset #ddd 0px 1px;
   padding:10px;
   }
 
@@ -187,7 +192,7 @@ ul.autopilot li .aspects { padding:10px; }
 .aspect .ui-slider-handle {
   width:40px;
   color:#fff;
-  font-size:9px;
+  font-size:10px;
   line-height:16px;
   text-shadow:rgba(0,0,0,0.5) 0px 1px;
   text-align:center;
@@ -197,18 +202,22 @@ ul.autopilot li .aspects { padding:10px; }
 
 .aspect option.null { color:#999; }
 
-.aspect .shades {
-  height:20px;
-  margin:0px 0px 5px;
-  overflow:hidden;
-  position:relative;
-  }
+.aspect .shade-links { margin-top:5px; }
 
 .aspect .swatch {
-  width:24px;
-  margin-right:1px;
+  float:none;
+  display:inline-block;
+  vertical-align:middle;
+  width:20px;
+  height:16px;
   background:#888 url(/assets/tilemill-autopilot/autopilot.png) -40px -40px;
   }
+
+.aspect .swatch.active {
+  box-shadow:
+    #fff 0px 0px 0px 1px,
+    #888 0px 0px 0px 3px;
+}
 
 .aspect .swatch,
 .aspect .swatch .fill {
@@ -217,4 +226,3 @@ ul.autopilot li .aspects { padding:10px; }
   }
 
 .aspect .swatch.active { display:block; }
-

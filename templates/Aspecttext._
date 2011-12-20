@@ -1,12 +1,6 @@
 <div class='colorpicker fill-e' data-key='text-fill'></div>
 <ul class='form'>
-  <li class='text'>
-    <h2>Text</h2>
-  </li>
-  <li>
-    <label>Visibility</label>
-    <div class='slider range' data-key='_text-zoom' data-min='0' data-max='22'></div>
-  </li>
+  <%= this.AspectFilters(obj) %>
   <li>
     <label>Scale</label>
     <div class='slider value' data-key='_text-scale' data-step='0.1' data-min='1' data-max='2'></div>
@@ -20,7 +14,7 @@
     <div class='slider value' data-key='text-character-spacing' data-min='0' data-max='10'></div>
   </li>
   <li>
-    <label>Field</label>
+    <label>Text field</label>
     <select name='text-name'>
     <option class='null' value=''>- No field -</option>
     <% _(datasource.get('fields')||[]).each(function(val, field) { %>

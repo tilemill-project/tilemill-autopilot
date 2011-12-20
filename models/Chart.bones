@@ -1,11 +1,48 @@
 model = Backbone.Model.extend();
 
+model.prototype.deepGet = function(key) {
+    var deepGet = function(attr, keys) {
+        var key = keys.shift();
+        if (keys.length) {
+            return deepGet(attr[key] || {}, keys);
+        } else {
+            return attr[key];
+        }
+    }
+    return deepGet(this.attributes, key.split('.'));
+};
+
+model.prototype.deepSet = function(key, val, options) {
+    var deepSet = function(attr, keys, val) {
+        var key = keys.shift();
+        if (keys.length) {
+            if (keys.length === 1 && !isNaN(parseInt(keys[0]))) {
+                attr[key] = attr[key] || [];
+            } else {
+                attr[key] = attr[key] || {};
+            }
+            attr[key] = deepSet(attr[key], keys, val);
+        } else {
+            attr[key] = val;
+        }
+        return attr;
+    }
+    var root = key.split('.').shift();
+    var attr = {};
+    attr[root] = this.attributes[root];
+    console.warn(attr[root]);
+    return this.set(deepSet(attr, key.split('.'), val), options)
+        .trigger('change')
+        .trigger('change:' + root);
+};
+
 model.prototype.compile = function(layer) {
     function zoomRules(rules, scale, zoom, key, val) {
         if (scale <= 1) {
             rules[key] = val;
             return;
         }
+        zoom = zoom || [0,22];
         for (var z = zoom[0], i = 0; z <= zoom[1]; z++, i++) {
             rules['[zoom='+z+']'] = rules['[zoom='+z+']'] || {};
             rules['[zoom='+z+']'][key] = val + '*' + Math.pow(scale,i).toFixed(2);
@@ -34,12 +71,12 @@ model.prototype.compile = function(layer) {
         if (key === 'id') return memo;
         if (key.indexOf('_') === 0) return memo;
         var prefix = key.split('-')[0];
-        var zoom = this.get('_'+prefix+'-zoom') || [0,22];
+        var filters = this.get('_'+prefix+'-filters') || {};
         var scale = this.get('_'+prefix+'-scale') || 1;
-        var group = _('::<%=p%>[zoom>=<%=z[0]%>][zoom<=<%=z[1]%>]').template({
-            z:zoom,
-            p:prefix
-        });
+        var group = '::' + prefix + _(filters).map(function(val, key) {
+            return _('[<%=k%>>=<%=v[0]%>][<%=k%><=<%=v[1]%>]')
+                .template({ k:key, v:val });
+        }).join('');
         switch (prefix) {
         case 'background':
             memo[key] = val;
@@ -61,7 +98,7 @@ model.prototype.compile = function(layer) {
             memo[group] = memo[group] || {};
             switch (key) {
             case 'line-width':
-                zoomRules(memo[group], scale, zoom, key, val);
+                zoomRules(memo[group], scale, filters.zoom, key, val);
                 break;
             default:
                 memo[group][key] = val;
@@ -76,7 +113,7 @@ model.prototype.compile = function(layer) {
             switch (key) {
             case 'text-size':
             case 'text-character-spacing':
-                zoomRules(memo[group], scale, zoom, key, val);
+                zoomRules(memo[group], scale, filters.zoom, key, val);
                 break;
             default:
                 memo[group][key] = val;
@@ -90,7 +127,7 @@ model.prototype.compile = function(layer) {
             switch(key) {
             case 'marker-width':
             case 'marker-line-width':
-                zoomRules(memo[group], scale, zoom, key, val);
+                zoomRules(memo[group], scale, filters.zoom, key, val);
                 break;
             default:
                 memo[group][key] = val;
