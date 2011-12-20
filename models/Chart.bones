@@ -1,74 +1,100 @@
 model = Backbone.Model.extend();
 
 model.prototype.compile = function(layer) {
-    // Exception for Map pseudo-layer.
-    if (this.id === 'Map') {
-        var rules = {'Map':{}};
-        if (this.get('fill')) rules['Map']['background-color'] = this.get('fill');
-        return this.toCSS(rules);
-    }
+    function zoomRules(rules, scale, zoom, key, val) {
+        if (scale <= 1) {
+            rules[key] = val;
+            return;
+        }
+        for (var z = zoom[0], i = 0; z <= zoom[1]; z++, i++) {
+            rules['[zoom='+z+']'] = rules['[zoom='+z+']'] || {};
+            rules['[zoom='+z+']'][key] = val + '*' + Math.pow(scale,i).toFixed(2);
+        }
+    };
+    var shadeRules = _(function(rules, key, val) {
+        if (_(this.get('_polygon-field')).isUndefined() ||
+            _(this.get('_polygon-range')).isUndefined() ||
+            val.length < 2) {
+            rules[key] = val;
+            return;
+        }
+        var divisor = val.length - 1;
+        var diff = (this.get('_polygon-range')[1] - this.get('_polygon-range')[0]) / divisor;
+        for (var i = 0; i < val.length; i++) {
+            var group = _('[<%=f%>>=<%=min%>]').template({
+                f: this.get('_polygon-field'),
+                min: this.get('_polygon-range')[0] + diff*i
+            });
+            rules[group] = rules[group] || {};
+            rules[group]['polygon-fill'] = val[i];
+        }
+    }).bind(this);
 
     var tree = _(this.toJSON()).reduce(_(function(memo, val, key) {
         if (key === 'id') return memo;
         if (key.indexOf('_') === 0) return memo;
-        switch (key.split('-')[0]) {
-        case 'fill':
-            var zoom = this.get('_fill-zoom') || [0,22];
-            var group = _('::fill[zoom>=<%=obj[0]%>][zoom<=<%=obj[1]%>]').template(zoom);
-            var attr = {
-                'polygon': 'polygon-fill',
-                'point': 'marker-fill'
-            };
+        var prefix = key.split('-')[0];
+        var zoom = this.get('_'+prefix+'-zoom') || [0,22];
+        var scale = this.get('_'+prefix+'-scale') || 1;
+        var group = _('::<%=p%>[zoom>=<%=z[0]%>][zoom<=<%=z[1]%>]').template({
+            z:zoom,
+            p:prefix
+        });
+        switch (prefix) {
+        case 'background':
+            memo[key] = val;
+            break;
+        case 'polygon':
             memo[group] = memo[group] || {};
-            memo[group][attr[layer.get('geometry')]] = val;
+            memo[group][key] = val;
+            switch (key) {
+            case 'polygon-fill':
+                shadeRules(memo[group], key, val);
+                break;
+            default:
+                memo[group][key] = val;
+                break;
+            }
             break;
         case 'line':
             if (!this.get('line-width')) return memo;
-            var zoom = this.get('_line-zoom') || [0,22];
-            var scale = this.get('_line-scale') || 1;
-            var group = _('::line[zoom>=<%=obj[0]%>][zoom<=<%=obj[1]%>]').template(zoom);
             memo[group] = memo[group] || {};
-            if (scale > 1 && _(['line-width']).include(key)) {
-                for (var z = zoom[0], i = 0; z < zoom[1]; z++, i++) {
-                    memo[group]['[zoom='+z+']'] = memo[group]['[zoom='+z+']'] || {};
-                    memo[group]['[zoom='+z+']'][key] = val + '*' + Math.pow(scale,i);
-                }
-            } else {
+            switch (key) {
+            case 'line-width':
+                zoomRules(memo[group], scale, zoom, key, val);
+                break;
+            default:
                 memo[group][key] = val;
+                break;
             }
             break;
         case 'text':
             if (!this.get('text-name')) return memo;
             if (!this.get('text-size')) return memo;
-            var zoom = this.get('_text-zoom') || [0,22];
-            var scale = this.get('_text-scale') || 1;
-            var group = _('::text[zoom>=<%=obj[0]%>][zoom<=<%=obj[1]%>]').template(zoom);
             memo[group] = memo[group] || {};
             memo[group]['text-allow-overlap'] = 'true';
-            if (scale > 1 && _(['text-size','text-character-spacing']).include(key)) {
-                for (var z = zoom[0], i = 0; z < zoom[1]; z++, i++) {
-                    memo[group]['[zoom='+z+']'] = memo[group]['[zoom='+z+']'] || {};
-                    memo[group]['[zoom='+z+']'][key] = val + '*' + Math.pow(scale,i);
-                }
-            } else {
+            switch (key) {
+            case 'text-size':
+            case 'text-character-spacing':
+                zoomRules(memo[group], scale, zoom, key, val);
+                break;
+            default:
                 memo[group][key] = val;
+                break;
             }
             break;
-        // Outlier
         case 'marker':
             if (!this.get('marker-width')) return memo;
-            var zoom = this.get('_marker-zoom') || [0,22];
-            var scale = this.get('_marker-scale') || 1;
-            var group = _('::marker[zoom>=<%=obj[0]%>][zoom<=<%=obj[1]%>]').template(zoom);
             memo[group] = memo[group] || {};
             memo[group]['marker-allow-overlap'] = 'true';
-            if (scale > 1 && _(['marker-width','marker-line-width']).include(key)) {
-                for (var z = zoom[0], i = 0; z < zoom[1]; z++, i++) {
-                    memo[group]['[zoom='+z+']'] = memo[group]['[zoom='+z+']'] || {};
-                    memo[group]['[zoom='+z+']'][key] = val + '*' + Math.pow(scale,i);
-                }
-            } else {
+            switch(key) {
+            case 'marker-width':
+            case 'marker-line-width':
+                zoomRules(memo[group], scale, zoom, key, val);
+                break;
+            default:
                 memo[group][key] = val;
+                break;
             }
             break;
         }
@@ -87,18 +113,26 @@ model.prototype.compile = function(layer) {
         }, {})
         .value();
     var rules = {};
-    rules['#'+this.id] = tree;
-    console.warn(this.toCSS(rules));
+    if (this.id === 'Map') {
+        rules[this.id] = tree;
+    } else {
+        rules['#'+this.id] = tree;
+    }
+//    console.warn(this.toCSS(rules));
     return this.toCSS(rules);
 };
 
 model.prototype.toCSS = function(rules, indent) {
     indent = indent || '';
     return _(rules).map(_(function(val, key) {
-        if (_(val).isObject()) return [
-            indent + key + ' {',
-            this.toCSS(val, indent + '  '),
-            indent + '}'].join('\n');
+        // Use first value of any arrays that remain.
+        if (_(val).isArray()) val = val[0];
+
+        // Recurse for objects.
+        if (_(val).isObject()) return _(val).size() > 1
+            ? [ indent + key + ' {', this.toCSS(val, indent + '  '), indent + '}' ].join('\n')
+            : [ indent + key + ' {', this.toCSS(val), '}' ].join(' ');
+
         // Quoted attributes. @TODO use the Carto reference JSON for this.
         switch (key) {
         case 'text-name':

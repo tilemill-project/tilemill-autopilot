@@ -22,6 +22,7 @@
   <li>
     <label>Field</label>
     <select name='text-name'>
+    <option class='null' value=''>- No field -</option>
     <% _(datasource.get('fields')||[]).each(function(val, field) { %>
     <option value='<%=field%>'><%=field%></option>
     <% }); %>
@@ -30,6 +31,7 @@
   <li>
     <label>Font</label>
     <select name='text-face-name'>
+    <option class='null' value=''>- No font -</option>
     <% _(window.abilities.fonts).each(function(font) { %>
     <option value='<%=font%>'><%=font%></option>
     <% }); %>

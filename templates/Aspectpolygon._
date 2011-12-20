@@ -1,0 +1,38 @@
+<div class='colorpicker fill-e' data-key='polygon-fill' data-index='0'></div>
+<ul class='form'>
+  <li class='text'>
+    <h2>Polygon</h2>
+  </li>
+  <li>
+    <label>Visibility</label>
+    <div class='slider range' data-key='_polygon-zoom' data-min='0' data-max='22'></div>
+  </li>
+  <li>
+    <label>Shades</label>
+    <div class='shades'>
+      <% _(model.get('polygon-fill')).each(function(color, index) { %>
+      <a class='swatch' data-key='polygon-fill.<%=index%>'><span class='fill' style='background-color:<%=color%>'></span></a>
+      <% }); %>
+    </div>
+    <span class='buttons joined'>
+      <a class='button' href='#shadeRemove'><span class='icon minus reverse'></span></a>
+      <a class='button' href='#shadeAdd'><span class='icon plus reverse'></span></a>
+      <a class='button' href='#shadeFlip'><span class='icon autopilot-flip reverse'></span></a>
+      <a class='button' href='#shadeInterpolate'><span class='icon autopilot-interpolate reverse'></a>
+    </span>
+  </li>
+  <li>
+    <label>Field</label>
+    <select <% if ((model.get('polygon-fill')||[]).length <= 1) %>disabled='disabled'<%;%> name='_polygon-field'>
+    <option class='null' value=''>- No field -</option>
+    <% _(datasource.get('fields')||[]).each(function(val, field) { %>
+    <% if (val.type === 'Number') { %>
+    <option value='<%=field%>'><%=field%></option>
+    <% } %>
+    <% }); %>
+    </select>
+    <% var range = model.get('_polygon-range')||[]; %>
+    <div class='slider range minmax' data-key='_polygon-range' data-min='<%=range[0]||0%>' data-max='<%=range[1]||10000%>'></div>
+  </li>
+</ul>
+<div class='mask'></div>

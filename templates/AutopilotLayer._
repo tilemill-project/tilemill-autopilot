@@ -53,11 +53,20 @@
     </a>
     <% } %>
 
-    <% if (_(['polygon','map']).include(get('geometry'))) { %>
-    <a class='aspect-fill' href='#<%=id%>' title='Fill'>
+    <% if (_(['polygon']).include(get('geometry'))) { %>
+    <a class='aspect-polygon' href='#<%=id%>' title='Fill'>
       <span class='icon autopilot-fill'></span>
       <span class='fill' style='
-        background-color:<%=chart.get('fill')%>
+        background-color:<%=(chart.get('polygon-fill')||[])[0] || ''%>
+        '></span>
+    </a>
+    <% } %>
+
+    <% if (_(['map']).include(get('geometry'))) { %>
+    <a class='aspect-background' href='#<%=id%>' title='Fill'>
+      <span class='icon autopilot-fill'></span>
+      <span class='fill' style='
+        background-color:<%=chart.get('background-color')%>
         '></span>
     </a>
     <% } %>

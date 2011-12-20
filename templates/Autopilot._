@@ -1,5 +1,8 @@
 <div class='autopilot-header sunken'>
+  <h2>Autopilot</h2>
+  <div class='actions'>
   <a href='#add' class='popup add-layer button'><span class='icon reverse plus labeled'></span> Add layer</a>
+  </div>
 </div>
 <ul class='autopilot layers fill-s'></ul>
 

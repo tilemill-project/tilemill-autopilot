@@ -8,23 +8,43 @@
 .icon.autopilot-line,
 .icon.autopilot-text,
 .icon.autopilot-markerfill,
-.icon.autopilot-markerline { background-image:url(/assets/tilemill-autopilot/autopilot.png); }
-.icon.geometry-map   { background-position:0px 0px; }
-.icon.autopilot-fill { background-position:-20px 0px; }
-.icon.autopilot-line { background-position:-40px 0px; }
-.icon.autopilot-text { background-position:-60px 0px; }
-.icon.autopilot-markerfill { background-position:-80px 0px; }
-.icon.autopilot-markerline { background-position:-100px 0px; }
+.icon.autopilot-markerline,
+.icon.autopilot-flip,
+.icon.autopilot-interpolate { background-image:url(/assets/tilemill-autopilot/autopilot.png); }
+.icon.geometry-map          { background-position:0px 0px; }
+.icon.autopilot-fill        { background-position:-20px 0px; }
+.icon.autopilot-line        { background-position:-40px 0px; }
+.icon.autopilot-text        { background-position:-60px 0px; }
+.icon.autopilot-markerfill  { background-position:-80px 0px; }
+.icon.autopilot-markerline  { background-position:-100px 0px; }
+.icon.autopilot-flip        { background-position:-120px 0px; }
+.icon.autopilot-interpolate { background-position:-140px 0px; }
+.reverse.geometry-map       { background-position:0px -20px; }
+.reverse.autopilot-fill     { background-position:-20px -20px; }
+.reverse.autopilot-line     { background-position:-40px -20px; }
+.reverse.autopilot-text     { background-position:-60px -20px; }
+.reverse.autopilot-markerfill { background-position:-80px -20px; }
+.reverse.autopilot-markerline { background-position:-100px -20px; }
+.reverse.autopilot-flip        { background-position:-120px -20px; }
+.reverse.autopilot-interpolate { background-position:-140px -20px; }
 
 .autopilot-header {
+  position:relative;
   padding:9px;
   margin:0px 10px;
   height:20px;
   }
 
-.autopilot-header .add-layer {
+.autopilot-header h2 {
+  font-weight:bold;
+  text-shadow:#fff 0px 1px;
+  color:#999;
+  }
+
+.autopilot-header .actions {
   position:absolute;
-  right:20px;
+  top:9px;
+  right:9px;
   }
 
 ul.autopilot {
@@ -35,7 +55,7 @@ ul.autopilot {
   max-height:none;
   }
 
-.autopilot li {
+ul.autopilot li {
   position:relative;
   background:#eee;
   padding:10px 30px 0px;
@@ -44,16 +64,16 @@ ul.autopilot {
   max-width:none;
   }
 
-.autopilot > li > label {
+ul.autopilot > li > label {
   display:block;
   padding-bottom:9px;
   }
 
-.autopilot .ui-sortable-helper { padding-top:9px; }
+ul.autopilot .ui-sortable-helper { padding-top:9px; }
 
-.autopilot li .handle,
-.autopilot li .actions,
-.autopilot li .aspects { padding:10px; }
+ul.autopilot li .handle,
+ul.autopilot li .actions,
+ul.autopilot li .aspects { padding:10px; }
 
 .aspects {
   display:block;
@@ -67,7 +87,7 @@ ul.autopilot {
   width:50px;
   height:20px;
   margin-left:5px;
-  background:#888 url(/assets/tilemill-autopilot/autopilot.png) -40px -20px;
+  background:#888 url(/assets/tilemill-autopilot/autopilot.png) -40px -40px;
   text-indent:-9999px;
   position:relative;
   }
@@ -81,6 +101,13 @@ ul.autopilot {
     inset rgba(0,0,0,0.2) 0px 0px 0px 1px,
     inset rgba(255,255,255,1) 0px 20px 40px -20px,
     inset rgba(255,255,255,0.4) 0px 2px;
+  }
+
+.aspects a.active .icon {
+  background-color:#aaa;
+  box-shadow:
+    inset rgba(0,0,0,0.5) 0px 1px 3px,
+    inset rgba(255,255,255,0.2) 0px 10px 20px -5px;
   }
 
 .aspects a,
@@ -127,9 +154,10 @@ ul.autopilot {
   z-index:2;
   width:30px;
   height:15px;
-  background:url(/assets/tilemill-autopilot/autopilot.png) 0px -20px no-repeat;
+  background:url(/assets/tilemill-autopilot/autopilot.png) 0px -40px no-repeat;
   }
 
+.aspect ul.form li.active { display:block; }
 .aspect ul.form li { padding:5px 20px 4px 100px; }
 .aspect ul.form li.text { padding:10px 20px 9px; }
 .aspect ul.form li label { width:70px; margin-left:-80px; text-align:left; }
@@ -149,18 +177,44 @@ ul.autopilot {
   padding:10px;
   }
 
+.aspect .ui-slider,
+.aspect .ui-slider:before,
+.aspect .ui-slider-handle,
+.aspect .ui-slider-range { height:16px; }
+.aspect .ui-slider { margin:2px 20px; }
+.aspect .ui-slider-range-min { left:-20px; padding-right:20px; }
+.aspect .ui-slider:before { left:-20px; right:-20px; }
 .aspect .ui-slider-handle {
-  background:#666;
-  height:16px;
-  margin-top:-6px;
-  margin-bottom:-6px;
-  }
-
-.aspect .ui-slider-handle {
+  width:40px;
   color:#fff;
   font-size:9px;
   line-height:16px;
   text-shadow:rgba(0,0,0,0.5) 0px 1px;
   text-align:center;
   }
+.aspect .ui-slider-handle:first-of-type,
+.aspect .ui-slider-handle:last-of-type { margin-left:-20px; }
+
+.aspect option.null { color:#999; }
+
+.aspect .shades {
+  height:20px;
+  margin:0px 0px 5px;
+  overflow:hidden;
+  position:relative;
+  }
+
+.aspect .swatch {
+  width:24px;
+  margin-right:1px;
+  background:#888 url(/assets/tilemill-autopilot/autopilot.png) -40px -40px;
+  }
+
+.aspect .swatch,
+.aspect .swatch .fill {
+  border-radius:3px;
+  box-shadow:inset rgba(0,0,0,0.1) 0px 0px 0px 1px;
+  }
+
+.aspect .swatch.active { display:block; }
 
