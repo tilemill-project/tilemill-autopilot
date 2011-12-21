@@ -91,7 +91,7 @@ ul.autopilot .ui-sortable-helper { padding-top:9px; }
 ul.autopilot li .handle,
 ul.autopilot li .actions,
 ul.autopilot li .aspects { padding:10px; }
-
+ul.autopilot li .actions { bottom:auto; }
 .aspects {
   display:block;
   position:absolute;
