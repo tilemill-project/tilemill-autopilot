@@ -25,7 +25,7 @@
     <%= key==='zoom' ? 'Zoom' : key %>
     <span class='icon autopilot-filter'></span>
   </label>
-  <div class='slider range' data-key='_<%=type%>-filters.<%=key%>' data-min='<%=info.min || 0%>' data-max='<%=info.max || 10000%>'></div>
+  <div class='slider range' data-step='<%=(info.max - info.min) < 10 ? 0.5 : 1%>' data-key='_<%=type%>-filters.<%=key%>' data-min='<%=info.min || 0%>' data-max='<%=info.max || 10000%>'></div>
   <a href='#filterRemove' data-key='_<%=type%>-filters.<%=key%>' class='icon close'></a>
 </li>
 <% } %>
@@ -40,7 +40,7 @@ if (!macro || !info) return; %>
     <%=macro.field%>
     <span class='icon autopilot-<%=key%><%=type%>'></span>
   </label>
-  <div class='slider range minmax' data-key='_<%=type%>-<%=key%>.range' data-min='<%=info.min%>' data-max='<%=info.max%>'></div>
+  <div class='slider range minmax' data-step='<%=(info.max - info.min) < 10 ? 0.5 : 1%>' data-key='_<%=type%>-<%=key%>.range' data-min='<%=info.min%>' data-max='<%=info.max%>'></div>
   <a href='#macroRemove' data-key='_<%=type%>-<%=key%>' class='icon close'></a>
 
   <% if (key === 'colorby') { %>
