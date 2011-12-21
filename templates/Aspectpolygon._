@@ -1,5 +1,5 @@
-<div class='colorpicker fill-e' data-key='polygon-fill.0'></div>
 <ul class='form'>
   <%=this.AspectFilters(obj)%>
 </ul>
+<div class='colorpicker fill-e' data-key='polygon-fill.0'></div>
 <div class='mask'></div>

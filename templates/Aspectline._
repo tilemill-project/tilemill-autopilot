@@ -1,4 +1,3 @@
-<div class='colorpicker fill-e' data-key='line-color'></div>
 <ul class='form'>
   <%=this.AspectFilters(obj)%>
   <li>
@@ -27,3 +26,4 @@
     </select>
   </li>
 </ul>
+<div class='colorpicker fill-e' data-key='line-color'></div>

@@ -113,7 +113,6 @@ ul.autopilot li .aspects { padding:10px; }
   border-radius:3px 0px 0px 3px;
   background-color:#ccc;
   position:absolute;
-  z-index:1;
   box-shadow:
     inset rgba(0,0,0,0.2) 0px 0px 0px 1px,
     inset rgba(255,255,255,1) 0px 20px 40px -20px,
@@ -166,7 +165,6 @@ ul.autopilot li .aspects { padding:10px; }
   position:absolute;
   right:10px;
   bottom:-10px;
-  z-index:2;
   width:30px;
   height:15px;
   background:url(/assets/tilemill-autopilot/autopilot.png) 0px -40px no-repeat;
@@ -209,7 +207,6 @@ ul.autopilot li .aspects { padding:10px; }
 .aspect .colorpicker {
   position:absolute;
   background:#fff;
-  z-index:1;
   border-left:1px solid #ddd;
   padding:10px;
   }

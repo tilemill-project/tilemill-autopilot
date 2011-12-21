@@ -4,6 +4,8 @@
   </span>
   <label><%=id%></label>
 
+  <div class='aspect'></div>
+
   <span class='actions fill-e'>
     <% if (get('geometry') !== 'raster') { %>
       <a title='Features (<%= id %>)' class='icon inspect drawer' href='#<%= id %>'>Features (<%= id %>)</a>
@@ -15,7 +17,6 @@
   <span class='aspects'>
     <% if (_(['polygon','line','linestring','point']).include(get('geometry'))) { %>
     <a class='aspect-text' href='#<%=id%>' title='Text'>
-      <span class='icon autopilot-text'></span>
       <% if (chart.get('text-size') && chart.get('text-name')) { %>
       <span class='fill fontview' style='
         color:<%=(chart.get('text-fill')||[])[0] || 'transparent'%>;
@@ -24,48 +25,48 @@
         font-style:<%=fontStyle(chart.get('text-face-name')||'regular')%>;
         '>Abc</span>
       <% } %>
+      <span class='icon autopilot-text'></span>
     </a>
     <% } %>
 
     <% if (_(['polygon','line','linestring']).include(get('geometry'))) { %>
     <a class='aspect-line' href='#<%=id%>' title='Line'>
-      <span class='icon autopilot-line'></span>
       <span class='line' style='
         border-top:<%=chart.get('line-width')||'0'%>px <%=chart.get('line-color')||'transparent'%> solid;
         margin-top:-<%=(parseInt(chart.get('line-width'),10)||0)*0.5%>px;
         '></span>
+      <span class='icon autopilot-line'></span>
     </a>
     <% } %>
 
     <% if (_(['point']).include(get('geometry'))) { %>
     <a class='aspect-marker' href='#<%=id%>' title='Fill'>
-      <span class='icon autopilot-marker'></span>
       <span class='fill' style='
         background-color:<%=(chart.get('marker-fill')||[])[0] || 'transparent'%>
         '></span>
+      <span class='icon autopilot-marker'></span>
     </a>
     <% } %>
 
     <% if (_(['polygon']).include(get('geometry'))) { %>
     <a class='aspect-polygon' href='#<%=id%>' title='Fill'>
-      <span class='icon autopilot-fill'></span>
       <span class='fill' style='
         background-color:<%=(chart.get('polygon-fill')||[])[0] || 'transparent'%>
         '></span>
+      <span class='icon autopilot-fill'></span>
     </a>
     <% } %>
 
     <% if (_(['map']).include(get('geometry'))) { %>
     <a class='aspect-background' href='#<%=id%>' title='Fill'>
-      <span class='icon autopilot-fill'></span>
       <span class='fill' style='
         background-color:<%=chart.get('background-color')%>
         '></span>
+      <span class='icon autopilot-fill'></span>
     </a>
     <% } %>
     <% /* @TODO: raster */ %>
   </span>
-  <div class='aspect'></div>
 </li>
 
 <%
