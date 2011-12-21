@@ -117,3 +117,10 @@ views['Stylesheets'].augment({
         });
     }
 });
+
+views['Layer'].augment({ render: function(p) {
+    p.call(this);
+    if ($('.project.autopilot').size()) $('.dock').addClass('autopilot');
+    return this;
+}});
+
