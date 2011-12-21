@@ -194,13 +194,18 @@ view.prototype.shadeInterpolate = function(ev) {
         G:(end.G-start.G)/divisor | 0,
         B:(end.B-start.B)/divisor | 0
     };
+    var hex = function(val) {
+        val = (val > 255 ? 255 : val).toString(16);
+        while (val.length < 2) { val = '0' + val; }
+        return val;
+    };
     this.model.deepSet(key, _(shades).map(function(val, i) {
         if (i === 0) return val;
         if (i === shades.length - 1) return val;
         return ['#',
-            (start.R + (diff.R*i)).toString(16),
-            (start.G + (diff.G*i)).toString(16),
-            (start.B + (diff.B*i)).toString(16)].join('');
+            hex(start.R + (diff.R*i)),
+            hex(start.G + (diff.G*i)),
+            hex(start.B + (diff.B*i))].join('');
     }));
     return false;
 };
