@@ -192,7 +192,6 @@ model.prototype.compile = function(layer) {
     } else {
         rules['#'+this.id] = tree;
     }
-    console.warn(this.toCSS(rules));
     return this.toCSS(rules);
 };
 

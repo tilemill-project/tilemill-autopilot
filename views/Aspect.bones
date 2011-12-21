@@ -155,7 +155,6 @@ view.prototype.shadeAdd = function(ev) {
         : this.model.get(key) || [];
     if (shades.length > 10) return false;
     shades.push(_(shades).last());
-    console.warn(key, shades);
     this.model.deepSet(key, shades);
     return false;
 };
