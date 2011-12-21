@@ -17,7 +17,6 @@ view.prototype.initialize = function(options) {
         'sliderUp',
         'sliderValue',
         'link',
-        'shades',
         'swatches');
     if (!options.type) throw new Error('options.type required');
     if (!options.target) throw new Error('options.target required');
@@ -32,8 +31,9 @@ view.prototype.initialize = function(options) {
     if (this.model.id === 'Map') return this.render();
 
     // Bind model change handlers.
-    this.model.bind('change:polygon-fill', this.shades);
     this.model.bind('change:polygon-fill', this.swatches);
+    this.model.bind('change:marker-fill', this.swatches);
+    this.model.bind('change:text-fill', this.swatches);
     this.model.bind('change:_polygon-field', this.render);
     this.model.bind('change:_marker-field', this.render);
     this.model.bind('filters', this.render);
@@ -148,31 +148,44 @@ view.prototype.sliderValue = function(ev, ui) {
     this.model.deepSet($(ev.target).data('key'), val);
 };
 
-view.prototype.shadeAdd = function() {
-    var shades = _(this.model.get('polygon-fill')).clone();
+view.prototype.shadeAdd = function(ev) {
+    var key = $(ev.currentTarget).data('key');
+    var shades = _(this.model.get(key)).isString()
+        ? [this.model.get(key)]
+        : this.model.get(key) || [];
     if (shades.length > 10) return false;
     shades.push(_(shades).last());
-    this.model.set({'polygon-fill':shades});
+    console.warn(key, shades);
+    this.model.deepSet(key, shades);
     return false;
 };
 
-view.prototype.shadeRemove = function() {
-    var shades = _(this.model.get('polygon-fill')).clone();
+view.prototype.shadeRemove = function(ev) {
+    var key = $(ev.currentTarget).data('key');
+    var shades = _(this.model.get(key)).isString()
+        ? [this.model.get(key)]
+        : this.model.get(key) || [];
     if (shades.length < 2) return false;
     shades.pop();
-    this.model.set({'polygon-fill':shades});
+    this.model.deepSet(key, shades);
     return false;
 };
 
-view.prototype.shadeFlip = function() {
-    var shades = _(this.model.get('polygon-fill')).clone();
+view.prototype.shadeFlip = function(ev) {
+    var key = $(ev.currentTarget).data('key');
+    var shades = _(this.model.get(key)).isString()
+        ? [this.model.get(key)]
+        : this.model.get(key) || [];
     shades.reverse();
-    this.model.set({'polygon-fill':shades});
+    this.model.deepSet(key, shades);
     return false;
 };
 
-view.prototype.shadeInterpolate = function() {
-    var shades = _(this.model.get('polygon-fill')).clone();
+view.prototype.shadeInterpolate = function(ev) {
+    var key = $(ev.currentTarget).data('key');
+    var shades = _(this.model.get(key)).isString()
+        ? [this.model.get(key)]
+        : this.model.get(key) || [];
     if (shades.length < 3) return false;
     var divisor = shades.length - 1;
     var start = this.css2rgb(_(shades).first());
@@ -182,25 +195,19 @@ view.prototype.shadeInterpolate = function() {
         G:(end.G-start.G)/divisor | 0,
         B:(end.B-start.B)/divisor | 0
     };
-    this.model.set({'polygon-fill': _(shades).map(function(val, i) {
+    this.model.deepSet(key, _(shades).map(function(val, i) {
         if (i === 0) return val;
         if (i === shades.length - 1) return val;
         return ['#',
             (start.R + (diff.R*i)).toString(16),
             (start.G + (diff.G*i)).toString(16),
             (start.B + (diff.B*i)).toString(16)].join('');
-    })});
+    }));
     return false;
-};
-
-view.prototype.shades = function() {
-    this.$('select[name=_polygon-field]')
-        .attr('disabled', this.model.get('polygon-fill').length < 2);
 };
 
 view.prototype.swatches = function() {
     var index = this.$('.swatches a').index(this.$('.swatches a.active'));
-    console.warn(index);
     this.$('.swatches')
         .replaceWith($('.swatches', templates['Aspect'+this.type](this)));
     this.$('.swatches a:eq('+index+')').addClass('active');
@@ -215,11 +222,11 @@ view.prototype.swatch = function(ev) {
 };
 
 view.prototype.filterAdd = function(ev) {
-    var field = this.$('.filters select').val();
+    var field = this.$('.tools select').val();
     var info = this.datasource.get('fields')[field];
     if (!field || !info) return false;
 
-    var key = this.$('.filters select').data('key') +'.'+ field;
+    var key = this.$('.tools select').data('key') +'.'+ field;
     var filter = this.model.deepGet(key) || [info.min||0, info.max||0];
     this.model.deepSet(key, filter);
     this.model.trigger('filters');
@@ -232,6 +239,27 @@ view.prototype.filterRemove = function(ev) {
     var filters = _(this.model.get(key) || {}).clone();
     delete filters[filter];
     this.model.deepSet(key, filters);
+    this.model.trigger('filters');
+    return false;
+};
+
+view.prototype.macroAdd = function(ev) {
+    var field = this.$('.tools select').val();
+    var info = this.datasource.get('fields')[field];
+    if (!field || !info) return false;
+
+    var key = $(ev.currentTarget).data('key');
+    var keyField = '_'+this.type+'-'+key+'.field';
+    var keyRange = '_'+this.type+'-'+key+'.range';
+    this.model.deepSet(keyField, field);
+    this.model.deepSet(keyRange, this.model.deepGet(keyRange) || [info.min||0, info.max||0]);
+    this.model.trigger('filters');
+    return false;
+};
+
+view.prototype.macroRemove = function(ev) {
+    var key = $(ev.currentTarget).data('key');
+    this.model.unset(key);
     this.model.trigger('filters');
     return false;
 };

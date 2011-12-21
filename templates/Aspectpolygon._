@@ -1,34 +1,5 @@
 <div class='colorpicker fill-e' data-key='polygon-fill.0'></div>
 <ul class='form'>
   <%=this.AspectFilters(obj)%>
-  <li>
-    <label>Colors</label>
-    <div class='shades swatches clearfix'>
-      <% _(model.get('polygon-fill')).each(function(color, index) { %>
-      <a class='swatch' href='#swatch' data-key='polygon-fill.<%=index%>'><span class='fill' style='background-color:<%=color%>'></span></a>
-      <% }); %>
-    </div>
-    <div class='shade-links buttons joined'>
-      <a class='button' href='#shadeRemove'><span class='icon minus reverse'></span></a>
-      <a class='button' href='#shadeAdd'><span class='icon plus reverse'></span></a>
-      <a class='button' href='#shadeFlip'><span class='icon autopilot-flip reverse'></span></a>
-      <a class='button' href='#shadeInterpolate'><span class='icon autopilot-interpolate reverse'></a>
-    </div>
-  </li>
-  <li>
-    <label>Color by</label>
-    <select <% if ((model.get('polygon-fill')||[]).length <= 1) %>disabled='disabled'<%;%> name='_polygon-field'>
-    <option class='null' value=''>- No field -</option>
-    <% _(datasource.get('fields')||[]).each(function(val, field) { %>
-    <% if (val.type === 'Number') { %>
-    <option value='<%=field%>'><%=field%></option>
-    <% } %>
-    <% }); %>
-    </select>
-    <% var info = datasource.get('fields')[model.get('_polygon-field')]; %>
-    <% if (info) { %>
-    <div class='slider range minmax' data-key='_polygon-range' data-min='<%=info.min%>' data-max='<%=info.max%>'></div>
-    <% } %>
-  </li>
 </ul>
 <div class='mask'></div>

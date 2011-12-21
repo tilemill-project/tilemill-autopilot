@@ -2,8 +2,8 @@
 <ul class='form'>
   <%=this.AspectFilters(obj)%>
   <li>
-    <label>Scale</label>
-    <div class='slider value' data-key='_line-scale' data-step='0.1' data-min='1' data-max='2'></div>
+    <label>Zoom delta</label>
+    <div class='slider value' data-key='_line-delta' data-step='0.1' data-min='1' data-max='2'></div>
   </li>
   <li>
     <label>Width</label>

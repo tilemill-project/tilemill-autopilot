@@ -38,30 +38,29 @@ model.prototype.deepSet = function(key, val, options) {
 model.prototype.compileZoom = function(rules, key, val) {
     var prefix = key.split('-').shift();
     var filters = this.get('_'+prefix+'-filters') || {};
-    var scale = this.get('_'+prefix+'-scale') || 1;
+    var delta = this.get('_'+prefix+'-delta') || 1;
     var zoom = filters.zoom || [0,22];
     val = _(val).isArray() ? val[0] : val;
 
-    if (scale <= 1) {
+    if (delta <= 1) {
         rules[key] = val;
     } else {
         for (var z = zoom[0], i = 0; z <= zoom[1]; z++, i++) {
             rules['[zoom='+z+']'] = rules['[zoom='+z+']'] || {};
-            rules['[zoom='+z+']'][key] = val + '*' + Math.pow(scale,i).toFixed(2);
+            rules['[zoom='+z+']'][key] = val + '*' + Math.pow(delta,i).toFixed(2);
         }
     }
     return this;
 };
 
-model.prototype.compileMarker = function(rules, key, val) {
+model.prototype.compileScaleby = function(rules, key, val) {
     var prefix = key.split('-').shift();
-    var filters = this.get('_'+prefix+'-filters') || {};
-    var field = this.get('_'+prefix+'-field');
-    var range = this.get('_'+prefix+'-range');
-
-    if (!field || !range || val.length < 2) {
-        rules[key] = val;
+    var macro = this.get('_'+prefix+'-scaleby');
+    if (!macro || !macro.field || !macro.range) {
+        this.compileZoom(rules, key, val);
     } else {
+        var range = macro.range;
+        var field = macro.field;
         var breaks = 5; // @TODO configurable.
         var diffRange = (range[1] - range[0]) / (breaks - 1);
         var diffValue = (val[1] - val[0]) / (breaks - 1);
@@ -77,14 +76,14 @@ model.prototype.compileMarker = function(rules, key, val) {
     return this;
 };
 
-model.prototype.compileShades = function(rules, key, val) {
+model.prototype.compileColorby = function(rules, key, val) {
     var prefix = key.split('-').shift();
-    var field = this.get('_'+prefix+'-field');
-    var range = this.get('_'+prefix+'-range');
-
-    if (!field || !range || val.length < 2) {
+    var macro = this.get('_'+prefix+'-colorby');
+    if (!macro || !macro.field || !macro.range) {
         rules[key] = val;
     } else {
+        var range = macro.range;
+        var field = macro.field;
         var breaks = val.length;
         var diffRange = (range[1] - range[0]) / (breaks - 1);
         for (var i = 0; i < breaks; i++) {
@@ -118,7 +117,7 @@ model.prototype.compile = function(layer) {
             memo[group][key] = val;
             switch (key) {
             case 'polygon-fill':
-                this.compileShades(memo[group], key, val);
+                this.compileColorby(memo[group], key, val);
                 break;
             default:
                 memo[group][key] = val;
@@ -143,9 +142,12 @@ model.prototype.compile = function(layer) {
             memo[group] = memo[group] || {};
             memo[group]['text-allow-overlap'] = 'true';
             switch (key) {
+            case 'text-fill':
+                this.compileColorby(memo[group], key, val);
+                break;
             case 'text-size':
             case 'text-character-spacing':
-                this.compileZoom(memo[group], key, val);
+                this.compileScaleby(memo[group], key, val);
                 break;
             default:
                 memo[group][key] = val;
@@ -157,9 +159,12 @@ model.prototype.compile = function(layer) {
             memo[group] = memo[group] || {};
             memo[group]['marker-allow-overlap'] = 'true';
             switch(key) {
+            case 'marker-fill':
+                this.compileColorby(memo[group], key, val);
+                break;
             case 'marker-width':
             case 'marker-line-width':
-                this.compileMarker(memo[group], key, val);
+                this.compileScaleby(memo[group], key, val);
                 break;
             default:
                 memo[group][key] = val;
@@ -187,7 +192,7 @@ model.prototype.compile = function(layer) {
     } else {
         rules['#'+this.id] = tree;
     }
-//    console.warn(this.toCSS(rules));
+    console.warn(this.toCSS(rules));
     return this.toCSS(rules);
 };
 

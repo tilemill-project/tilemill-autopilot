@@ -18,7 +18,7 @@
       <span class='icon autopilot-text'></span>
       <% if (chart.get('text-size') && chart.get('text-name')) { %>
       <span class='fill fontview' style='
-        color:<%=chart.get('text-fill')||'transparent'%>;
+        color:<%=(chart.get('text-fill')||[])[0] || 'transparent'%>;
         font-family:"<%=fontFamily(chart.get('text-face-name')||'Arial')%>",sans-serif;
         font-weight:<%=fontWeight(chart.get('text-face-name')||'normal')%>;
         font-style:<%=fontStyle(chart.get('text-face-name')||'regular')%>;
@@ -41,7 +41,7 @@
     <a class='aspect-marker' href='#<%=id%>' title='Fill'>
       <span class='icon autopilot-marker'></span>
       <span class='fill' style='
-        background-color:<%=chart.get('marker-fill')%>
+        background-color:<%=(chart.get('marker-fill')||[])[0] || 'transparent'%>
         '></span>
     </a>
     <% } %>
@@ -50,7 +50,7 @@
     <a class='aspect-polygon' href='#<%=id%>' title='Fill'>
       <span class='icon autopilot-fill'></span>
       <span class='fill' style='
-        background-color:<%=(chart.get('polygon-fill')||[])[0] || ''%>
+        background-color:<%=(chart.get('polygon-fill')||[])[0] || 'transparent'%>
         '></span>
     </a>
     <% } %>
