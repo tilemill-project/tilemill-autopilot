@@ -1,4 +1,5 @@
 {
     "name": "tilemill-autopilot",
-    "description": "UI for common map designs."
+    "description": "UI for common map designs.",
+    "engines": {"tilemill": "0.8.x"}
 }
