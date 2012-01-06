@@ -1,9 +1,6 @@
 view = Backbone.View.extend();
 
 view.prototype.events = {
-    'slidechange .slider': 'sliderValue',
-    'slidecreate .slider': 'sliderUp',
-    'slide .slider': 'sliderUp',
     'change select': 'select',
     'click a': 'link'
 };
@@ -14,8 +11,6 @@ view.prototype.initialize = function(options) {
     _(this).bindAll(
         'render',
         'select',
-        'sliderUp',
-        'sliderValue',
         'link',
         'swatches');
     if (!options.type) throw new Error('options.type required');
@@ -79,28 +74,7 @@ view.prototype.render = function() {
         $(this).val(model.deepGet($(this).attr('name')));
     });
 
-    this.$('.slider.value').each(function() {
-        $(this).slider({
-            min:$(this).data('min') || 0,
-            max:$(this).data('max') || 0,
-            step:$(this).data('step') || 1,
-            value: model.deepGet($(this).data('key')) || 0,
-            range: 'min'
-        });
-    });
-
-    this.$('.slider.range').each(function() {
-        $(this).slider({
-            min:$(this).data('min') || 0,
-            max:$(this).data('max') || 0,
-            step:$(this).data('step') || 1,
-            values: model.deepGet($(this).data('key')) || [
-                $(this).data('min') || 0,
-                $(this).data('max') || 0
-            ],
-            range: true
-        });
-    });
+    Bones.utils.sliders(this.$('.slider'), model);
     return this;
 };
 
@@ -116,36 +90,6 @@ view.prototype.select = function(ev) {
     var attr = {};
     attr[key] = $(ev.currentTarget).val();
     this.model.set(attr);
-};
-
-view.prototype.sliderUp = function(ev, ui) {
-    function num(num) {
-        num = num || 0;
-        if (num >= 1e6) {
-            return (num / 1e6).toFixed(1) + 'm';
-        } else if (num >= 1e3) {
-            return (num / 1e3).toFixed(1) + 'k';
-        } else if (num >= 100) {
-            return num.toFixed(0);
-        } else {
-            return num;
-        }
-    };
-    if ($(ev.target).hasClass('range')) {
-        $('.ui-slider-handle:first', ev.target).text(num($(ev.target).slider('values')[0]));
-        $('.ui-slider-handle:last', ev.target).text(num($(ev.target).slider('values')[1]));
-    } else {
-        $('.ui-slider-handle', ev.target).text(num($(ev.target).slider('value')));
-    }
-};
-
-view.prototype.sliderValue = function(ev, ui) {
-    this.sliderUp(ev, ui);
-    var attr = {};
-    var val = $(ev.target).hasClass('range')
-        ? $(ev.target).slider('values')
-        : $(ev.target).slider('value');
-    this.model.deepSet($(ev.target).data('key'), val);
 };
 
 view.prototype.shadeAdd = function(ev) {

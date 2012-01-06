@@ -64,7 +64,7 @@ view.prototype.render = function() {
     this.$('ul.layers').sortable({
         axis: 'y',
         handle: '.handle',
-        containment: $(this.el),
+        containment: this.$('ul.layers'),
         tolerance: 'pointer',
         items: '> *:not(.pinned)'
     });
@@ -120,7 +120,7 @@ views['Stylesheets'].augment({
 
 views['Layer'].augment({ render: function(p) {
     p.call(this);
-    if ($('.project.autopilot').size()) $('.dock').addClass('autopilot');
+    if ($('.project.autopilot').size()) $('#popup div.layer').addClass('autopilot');
     return this;
 }});
 

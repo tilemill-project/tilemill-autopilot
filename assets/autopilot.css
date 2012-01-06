@@ -211,24 +211,6 @@ ul.autopilot li .actions { bottom:auto; }
   padding:10px;
   }
 
-.aspect .ui-slider,
-.aspect .ui-slider:before,
-.aspect .ui-slider-handle,
-.aspect .ui-slider-range { height:16px; }
-.aspect .ui-slider { margin:2px 20px; }
-.aspect .ui-slider-range-min { left:-20px; padding-right:20px; }
-.aspect .ui-slider:before { left:-20px; right:-20px; }
-.aspect .ui-slider-handle {
-  width:40px;
-  color:#fff;
-  font-size:10px;
-  line-height:16px;
-  text-shadow:rgba(0,0,0,0.5) 0px 1px;
-  text-align:center;
-  }
-.aspect .ui-slider-handle:first-of-type,
-.aspect .ui-slider-handle:last-of-type { margin-left:-20px; }
-
 .aspect option.null { color:#999; }
 
 .aspect .shade-links { margin-top:5px; }

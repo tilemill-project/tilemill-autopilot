@@ -1,40 +1,5 @@
 model = Backbone.Model.extend();
 
-model.prototype.deepGet = function(key) {
-    var deepGet = function(attr, keys) {
-        var key = keys.shift();
-        if (keys.length) {
-            return deepGet(attr[key] || {}, keys);
-        } else {
-            return attr[key];
-        }
-    }
-    return deepGet(this.attributes, key.split('.'));
-};
-
-model.prototype.deepSet = function(key, val, options) {
-    var deepSet = function(attr, keys, val) {
-        var key = keys.shift();
-        if (keys.length) {
-            if (keys.length === 1 && !isNaN(parseInt(keys[0]))) {
-                attr[key] = attr[key] || [];
-            } else {
-                attr[key] = attr[key] || {};
-            }
-            attr[key] = deepSet(attr[key], keys, val);
-        } else {
-            attr[key] = val;
-        }
-        return attr;
-    }
-    var root = key.split('.').shift();
-    var attr = {};
-    attr[root] = this.attributes[root];
-    return this.set(deepSet(attr, key.split('.'), val), options)
-        .trigger('change')
-        .trigger('change:' + root);
-};
-
 model.prototype.compileZoom = function(rules, key, val) {
     var prefix = key.split('-').shift();
     var filters = this.get('_'+prefix+'-filters') || {};
