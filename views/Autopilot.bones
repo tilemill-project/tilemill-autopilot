@@ -58,7 +58,7 @@ view.prototype.aspect = function(ev) {
 };
 
 view.prototype.render = function() {
-    $(this.el).append(templates.Autopilot());
+    $(this.el).html(templates.Autopilot());
     this.makeLayer(new models.Layer({ id:'Map', geometry:'map' }));
     this.model.get('Layer').chain().each(this.makeLayer);
     this.$('ul.layers').sortable({
