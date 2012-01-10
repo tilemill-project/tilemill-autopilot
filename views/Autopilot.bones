@@ -1,14 +1,18 @@
 view = views.Layers.extend({});
 
 view.prototype.events = _({
-    'click .aspects a': 'aspect'
+    'click .aspects a': 'aspect',
+    'click a[href=#custom]': 'custom',
+    'click a[href=#disable]': 'disable'
 }).extend(view.prototype.events);
 
 view.prototype.initialize = _(view.prototype.initialize).wrap(function(p, o) {
     if (!o.charts) throw new Error('options.charts is required');
+    if (!o.editor) throw new Error('options.editor is required');
 
-    _(this).bindAll('compile', 'aspect');
+    _(this).bindAll('compile', 'aspect', 'custom', 'disable');
     $(this.el).parents('div.project').addClass('autopilot');
+    this.editor = o.editor;
     this.charts = o.charts;
     this.charts.bind('change', this.compile);
     this.model.get('Layer').bind('change', this.compile);
@@ -16,14 +20,39 @@ view.prototype.initialize = _(view.prototype.initialize).wrap(function(p, o) {
     return p.call(this);
 });
 
-view.prototype.compile = function() {
-    this.model.get('Stylesheet').refresh([{
-        id: 'style.mss',
+view.prototype.compile = function(opts) {
+    opts = opts || {};
+    var autopilot = this.model.get('Stylesheet').get('autopilot.mss');
+    if (autopilot) autopilot.set({
         data: templates.AutopilotCompile({
+            disable: opts.disable,
             layer: this.model.get('Layer'),
             charts: this.charts
         })
-    }]);
+    });
+};
+
+view.prototype.custom = function(ev) {
+    var target = $(ev.currentTarget);
+    var parent = $(this.el).parents('div.project');
+    target.toggleClass('active');
+    $('.editor', parent).toggleClass('active');
+    this.editor.render();
+    return false;
+};
+
+view.prototype.disable = function(ev) {
+    new views.Modal({
+        content: 'Disable autopilot for this project? This action cannot be undone.',
+        affirmative: 'Disable',
+        callback: _(function() {
+            this.compile({disable:true});
+            $(this.el).parents('div.project').removeClass('autopilot');
+            this.editor.render();
+            this.remove();
+        }).bind(this)
+    });
+    return false;
 };
 
 view.prototype.aspect = function(ev) {
@@ -102,19 +131,30 @@ view.prototype.makeLayer = function(model) {
 
 views['Stylesheets'].augment({
     initialize: function(p) {
-        var data = (this.model.get('Stylesheet').at(0) ||
-            new models.Stylesheet()).get('data').split('\n');
-        if (data[1] !== 'autopilot') return p.call(this);
+        p.call(this);
 
-        try { data = JSON.parse(data[2]); }
-        catch(e) { data = []; }
+        var autopilot = this.model.get('Stylesheet').get('autopilot.mss');
+        if (!autopilot) return;
+
+        var lines = autopilot.get('data').split('\n');
+        if (lines.length < 4) return;
+
+        var header = lines[1].match(/^autopilot (\d\.\d\.\d)$/);
+        if (!header) return;
+
+        var data = [];
+        try { data = JSON.parse(lines[2]); } catch(e) {};
 
         // Autopilot on!
-        return new view({
+        var el = $('<div class="autopilot fill-s"></div>');
+        $(this.el).after(el);
+        new view({
+            editor: this,
             charts: new models.Charts(data),
-            model:this.model,
-            el:this.el
+            model: this.model,
+            el: $(el)
         });
+        return;
     }
 });
 
