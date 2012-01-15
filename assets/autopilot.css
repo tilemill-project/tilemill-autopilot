@@ -1,5 +1,9 @@
 /* AUTOPILOT */
-.autopilot ul.form input.with-style { display:none; }
+.autopilot ul.form input.with-style,
+.project.autopilot .pane a[href='#back'],
+.project.autopilot .palette a[href="#fonts"],
+.project.autopilot .palette a[href="#carto"],
+.project.autopilot .palette a[href="#layers"] { display:none; }
 
 .icon.geometry-map,
 .icon.autopilot-fill,
