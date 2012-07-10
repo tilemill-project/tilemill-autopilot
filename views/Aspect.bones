@@ -38,7 +38,7 @@ view.prototype.initialize = function(options) {
     this.datasource.set(_(layer.get('Datasource')).extend({
         id: layer.id,
         project: this.project.id,
-        srs: null
+        srs: layer.get('srs')
     }));
     this.datasource.fetchInfo({
         success: _(function(m, resp) {
