@@ -250,3 +250,8 @@ ul.autopilot-layers li .actions { bottom:auto; }
   }
 
 .autopilot .code { top:29px; }
+
+ul.form .buttons.joined .button {
+  min-width: 30px;
+  margin: 0;
+}
